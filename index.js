@@ -15,6 +15,9 @@ router.get('/api/getUserInfo', (req, res) => {
 const usuarios = require('./controller/usuario/router-usuario');
 app.use('/api/usuario',usuarios);
 
+const procedimentos = require('./controller/procedimento/router-procedimento');
+app.use('/api/procedimento',procedimentos);
+
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
