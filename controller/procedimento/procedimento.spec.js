@@ -5,7 +5,7 @@ const express = require("express");
 const app = express();
 
 app.use(express.urlencoded({ extended: false }));
-app.use(express.json())
+app.use(express.json());
 app.use("/", procedimento);
 
 // ---------------------------------------------------------------------
@@ -229,6 +229,34 @@ it("should update the procedure", done => {
     .expect(200, done);
 });
 
+it("should return an error when updating a non-existent procedure", done => {
+  const nonExistentId = 999;
+  const payload = { nome: 'consulta', especialidade: 'cardiologia', tempo: "0:30", necessidadeEquipe: "não" };
+  request(app)
+    .patch(`/${nonExistentId}`)
+    .send(payload)
+    .expect(404)
+    .expect({ erro: 'Procedimento não encontrado' }, done);
+});
+
+it("should return an error when trying to update procedure 'nome' with empty value", done => {
+  const payload = { nome: '', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O nome é obrigatório' })
+    .expect(400, done);
+});
+
+it("should return an error when trying to update procedure 'nome' with too long value", done => {
+  const payload = { nome: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O nome deve conter no máximo 30 caracteres' })
+    .expect(400, done);
+});
+
 // ---------------------------------------------------------------------
 // Testes do método DELETE
 
@@ -238,18 +266,14 @@ it("should delete the procedure by id", done => {
     .post("/")
     .send(payload)
     .expect(201)
-    .end((err, res) => {
-      if (err) return done(err);
-
+    .then(res => {
       const procedimentoId = res.body.id;
 
-      request(app)
+      return request(app)
         .delete(`/${procedimentoId}`)
         .expect(204)
-        .end((err) => {
-          if (err) return done(err);
-
-          request(app)
+        .then(() => {
+          return request(app)
             .get("/")
             .expect(200)
             .expect(res => {
@@ -257,10 +281,11 @@ it("should delete the procedure by id", done => {
               if (procedimento) {
                 throw new Error(`Expected procedure with id '${procedimentoId}' to be deleted`);
               }
-            })
-            .end(done);
+            });
         });
-    });
+    })
+    .then(() => done())
+    .catch(done);
 });
 
 it("should return an error when trying to delete a non-existent procedure", done => {

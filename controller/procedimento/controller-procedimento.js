@@ -107,6 +107,11 @@ module.exports = () => {
             return;
         }
 
+        if (!procedimentoAtualizado.nome) {
+            res.status(400).json({ erro: 'O nome é obrigatório' });
+            return;
+        }
+
         if (procedimentoAtualizado.especialidade) {
             const especialidadePalavras = procedimentoAtualizado.especialidade.split(/\s+/);
             for (const palavra of especialidadePalavras) {
