@@ -12,83 +12,74 @@ app.use("/", procedimento);
 // Testes do método POST
 
 it("should save the procedure", done => {
-    const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
-    request(app)
-      .post("/")
-      .send(payload)
-      .expect(res => {
-        if (res.body.nome !== payload.nome) {
-          throw new Error(`Expected 'nome' to be '${payload.nome}', but got '${res.body.nome}'`);
-        }
-        if (res.body.especialidade !== payload.especialidade) {
-          throw new Error(`Expected 'especialidade' to be '${payload.especialidade}', but got '${res.body.especialidade}'`);
-        }
-        if (res.body.tempo !== payload.tempo) {
-          throw new Error(`Expected 'tempo' to be '${payload.tempo}', but got '${res.body.tempo}'`);
-        }
-        if (res.body.necessidadeEquipe !== payload.necessidadeEquipe) {
-          throw new Error(`Expected 'necessidadeEquipe' to be '${payload.necessidadeEquipe}', but got '${res.body.necessidadeEquipe}'`);
-        }
-        if (res.body.equipe !== payload.equipe) {
-            throw new Error(`Expected 'equipe' to be '${payload.equipe}', but got '${res.body.equipe}'`);
-        }
-      })
-      .expect(201, done);
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .post("/")
+    .send(payload)
+    .expect(res => {
+      if (res.body.nome !== payload.nome) {
+        throw new Error(`Expected 'nome' to be '${payload.nome}', but got '${res.body.nome}'`);
+      }
+      if (res.body.especialidade !== payload.especialidade) {
+        throw new Error(`Expected 'especialidade' to be '${payload.especialidade}', but got '${res.body.especialidade}'`);
+      }
+      if (res.body.tempo !== payload.tempo) {
+        throw new Error(`Expected 'tempo' to be '${payload.tempo}', but got '${res.body.tempo}'`);
+      }
+      if (res.body.necessidadeEquipe !== payload.necessidadeEquipe) {
+        throw new Error(`Expected 'necessidadeEquipe' to be '${payload.necessidadeEquipe}', but got '${res.body.necessidadeEquipe}'`);
+      }
+      if (res.body.equipe !== payload.equipe) {
+        throw new Error(`Expected 'equipe' to be '${payload.equipe}', but got '${res.body.equipe}'`);
+      }
+    })
+    .expect(201, done);
 });
 
 // Testes de validação do "nome"
 
 it("should return an error when procedure 'nome' is empty", done => {
-    const payload = {nome: '', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
-    request(app)
-      .post("/")
-      .send(payload)
-      .expect({ erro: 'O nome é obrigatório' })
-      .expect(400, done);
+  const payload = { nome: '', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .post("/")
+    .send(payload)
+    .expect({ erro: 'O nome é obrigatório' })
+    .expect(400, done);
 });
 
 it("should return an error when procedure 'nome' is too long", done => {
-    const payload = {nome: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
-    request(app)
-      .post("/")
-      .send(payload)
-      .expect({ erro: 'O nome deve conter no máximo 30 caracteres' })
-      .expect(400, done);
-});
-
-it("should return an error when procedure 'nome' is too long", done => {
-    const payload = {nome: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
-    request(app)
-      .post("/")
-      .send(payload)
-      .expect({ erro: 'O nome deve conter no máximo 30 caracteres' })
-      .expect(400, done);
+  const payload = { nome: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .post("/")
+    .send(payload)
+    .expect({ erro: 'O nome deve conter no máximo 30 caracteres' })
+    .expect(400, done);
 });
 
 // Testes de validação da "especialidade"
 
 it("should return an error when procedure 'especialidade' is empty", done => {
-    const payload = {nome: 'cirurgia', especialidade: '', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
-    request(app)
-      .post("/")
-      .send(payload)
-      .expect({ erro: 'A especialidade é obrigatória' })
-      .expect(400, done);
+  const payload = { nome: 'cirurgia', especialidade: '', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .post("/")
+    .send(payload)
+    .expect({ erro: 'A especialidade é obrigatória' })
+    .expect(400, done);
 });
 
 it("should return an error when procedure 'especialidade' is too long", done => {
-    const payload = {nome: 'cirurgia', especialidade: 'aaaaaaaaaaaaaaaa', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
-    request(app)
-      .post("/")
-      .send(payload)
-      .expect({ erro: 'A especialidade não pode conter palavras com mais de 15 caracteres' })
-      .expect(400, done);
+  const payload = { nome: 'cirurgia', especialidade: 'aaaaaaaaaaaaaaaa', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .post("/")
+    .send(payload)
+    .expect({ erro: 'A especialidade não pode conter palavras com mais de 15 caracteres' })
+    .expect(400, done);
 });
 
 // Testes de validação do "tempo médio"
 
 it("should return an error when procedure 'tempo médio' is empty", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "", necessidadeEquipe: "sim", equipe: 'anestesista'};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "", necessidadeEquipe: "sim", equipe: 'anestesista' };
   request(app)
     .post("/")
     .send(payload)
@@ -97,7 +88,7 @@ it("should return an error when procedure 'tempo médio' is empty", done => {
 });
 
 it("should return an error when procedure 'tempo médio' is in the wrong format", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2h00", necessidadeEquipe: "sim", equipe: 'anestesista'};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2h00", necessidadeEquipe: "sim", equipe: 'anestesista' };
   request(app)
     .post("/")
     .send(payload)
@@ -106,7 +97,7 @@ it("should return an error when procedure 'tempo médio' is in the wrong format"
 });
 
 it("should return an error when procedure 'tempo médio' is not in 30 minute intervals", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:15", necessidadeEquipe: "sim", equipe: 'anestesista'};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:15", necessidadeEquipe: "sim", equipe: 'anestesista' };
   request(app)
     .post("/")
     .send(payload)
@@ -115,7 +106,7 @@ it("should return an error when procedure 'tempo médio' is not in 30 minute int
 });
 
 it("should return an error when procedure 'tempo médio' is lower than 30 minutes", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "0:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "0:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
   request(app)
     .post("/")
     .send(payload)
@@ -124,7 +115,7 @@ it("should return an error when procedure 'tempo médio' is lower than 30 minute
 });
 
 it("should return an error when procedure 'tempo médio' is higher than 24 hours", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "24:30", necessidadeEquipe: "sim", equipe: 'anestesista'};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "24:30", necessidadeEquipe: "sim", equipe: 'anestesista' };
   request(app)
     .post("/")
     .send(payload)
@@ -135,7 +126,7 @@ it("should return an error when procedure 'tempo médio' is higher than 24 hours
 // Testes de validação da "necessidade de equipe"
 
 it("should return an error when procedure 'necessidade de equipe' is empty", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: ""};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "" };
   request(app)
     .post("/")
     .send(payload)
@@ -144,7 +135,7 @@ it("should return an error when procedure 'necessidade de equipe' is empty", don
 });
 
 it("should return an error when procedure 'necessidade de equipe' is different than 'sim' or 'não'", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "talvez", equipe: 'anestesista'};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "talvez", equipe: 'anestesista' };
   request(app)
     .post("/")
     .send(payload)
@@ -155,7 +146,7 @@ it("should return an error when procedure 'necessidade de equipe' is different t
 // Testes de validação da "equipe"
 
 it("should return an error when procedure 'necessidade de equipe' is 'sim' but 'equipe' is empty", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: ''};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: '' };
   request(app)
     .post("/")
     .send(payload)
@@ -164,7 +155,7 @@ it("should return an error when procedure 'necessidade de equipe' is 'sim' but '
 });
 
 it("should set 'equipe' to 'undefined' if 'necessidade de equipe' is 'não'", done => {
-  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "não", equipe: 'anestesista'};
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "não", equipe: 'anestesista' };
   request(app)
     .post("/")
     .send(payload)
@@ -173,7 +164,7 @@ it("should set 'equipe' to 'undefined' if 'necessidade de equipe' is 'não'", do
         throw new Error(`Expected 'necessidadeEquipe' to be '${payload.necessidadeEquipe}', but got '${res.body.necessidadeEquipe}'`);
       }
       if (res.body.equipe !== undefined) {
-          throw new Error(`Expected 'equipe' to be 'undefined', but got '${res.body.equipe}'`);
+        throw new Error(`Expected 'equipe' to be 'undefined', but got '${res.body.equipe}'`);
       }
     })
     .expect(201, done);
@@ -183,13 +174,13 @@ it("should set 'equipe' to 'undefined' if 'necessidade de equipe' is 'não'", do
 // Teste do método GET
 
 it("should list the procedures", done => {
-  const expected = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista'};
+  const expected = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
   request(app)
     .get("/")
     .expect("Content-Type", /json/)
     .expect(res => {
-      listedProcedure = res.body[0];
-      
+      const listedProcedure = res.body[0];
+
       if (listedProcedure.nome !== expected.nome) {
         throw new Error(`Expected 'nome' to be '${expected.nome}', but got '${listedProcedure.nome}'`);
       }
@@ -203,9 +194,9 @@ it("should list the procedures", done => {
         throw new Error(`Expected 'necessidadeEquipe' to be '${expected.necessidadeEquipe}', but got '${listedProcedure.necessidadeEquipe}'`);
       }
       if (listedProcedure.equipe !== expected.equipe) {
-          throw new Error(`Expected 'equipe' to be '${expected.equipe}', but got '${listedProcedure.equipe}'`);
+        throw new Error(`Expected 'equipe' to be '${expected.equipe}', but got '${listedProcedure.equipe}'`);
       }
-      
+
     })
     .expect(200, done);
 });
@@ -213,8 +204,8 @@ it("should list the procedures", done => {
 // ---------------------------------------------------------------------
 // Testes do método PATCH
 
-it("should save the procedure", done => {
-  const payload = {nome: 'consulta', especialidade: 'cardiologia', tempo: "0:30", necessidadeEquipe: "não"};
+it("should update the procedure", done => {
+  const payload = { nome: 'consulta', especialidade: 'cardiologia', tempo: "0:30", necessidadeEquipe: "não" };
   request(app)
     .patch("/1")
     .send(payload)
@@ -232,8 +223,50 @@ it("should save the procedure", done => {
         throw new Error(`Expected 'necessidadeEquipe' to be '${payload.necessidadeEquipe}', but got '${res.body.necessidadeEquipe}'`);
       }
       if (res.body.equipe !== payload.equipe) {
-          throw new Error(`Expected 'equipe' to be '${payload.equipe}', but got '${res.body.equipe}'`);
+        throw new Error(`Expected 'equipe' to be '${payload.equipe}', but got '${res.body.equipe}'`);
       }
     })
     .expect(200, done);
+});
+
+// ---------------------------------------------------------------------
+// Testes do método DELETE
+
+it("should delete the procedure by id", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .post("/")
+    .send(payload)
+    .expect(201)
+    .end((err, res) => {
+      if (err) return done(err);
+
+      const procedimentoId = res.body.id;
+
+      request(app)
+        .delete(`/${procedimentoId}`)
+        .expect(204)
+        .end((err) => {
+          if (err) return done(err);
+
+          request(app)
+            .get("/")
+            .expect(200)
+            .expect(res => {
+              const procedimento = res.body.find(p => p.id === procedimentoId);
+              if (procedimento) {
+                throw new Error(`Expected procedure with id '${procedimentoId}' to be deleted`);
+              }
+            })
+            .end(done);
+        });
+    });
+});
+
+it("should return an error when trying to delete a non-existent procedure", done => {
+  const nonExistentId = 999;
+  request(app)
+    .delete(`/${nonExistentId}`)
+    .expect(404)
+    .expect({ erro: 'Procedimento não encontrado' }, done);
 });
