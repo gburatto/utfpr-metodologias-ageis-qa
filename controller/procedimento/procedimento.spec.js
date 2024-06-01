@@ -163,6 +163,22 @@ it("should return an error when procedure 'necessidade de equipe' is 'sim' but '
     .expect(400, done);
 });
 
+it("should set 'equipe' to 'undefined' if 'necessidade de equipe' is 'não'", done => {
+  const payload = {nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "não", equipe: 'anestesista'};
+  request(app)
+    .post("/")
+    .send(payload)
+    .expect(res => {
+      if (res.body.necessidadeEquipe !== payload.necessidadeEquipe) {
+        throw new Error(`Expected 'necessidadeEquipe' to be '${payload.necessidadeEquipe}', but got '${res.body.necessidadeEquipe}'`);
+      }
+      if (res.body.equipe !== undefined) {
+          throw new Error(`Expected 'equipe' to be 'undefined', but got '${res.body.equipe}'`);
+      }
+    })
+    .expect(201, done);
+});
+
 // ---------------------------------------------------------------------
 // Teste do método GET
 
@@ -190,6 +206,34 @@ it("should list the procedures", done => {
           throw new Error(`Expected 'equipe' to be '${expected.equipe}', but got '${listedProcedure.equipe}'`);
       }
       
+    })
+    .expect(200, done);
+});
+
+// ---------------------------------------------------------------------
+// Testes do método PATCH
+
+it("should save the procedure", done => {
+  const payload = {nome: 'consulta', especialidade: 'cardiologia', tempo: "0:30", necessidadeEquipe: "não"};
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect(res => {
+      if (res.body.nome !== payload.nome) {
+        throw new Error(`Expected 'nome' to be '${payload.nome}', but got '${res.body.nome}'`);
+      }
+      if (res.body.especialidade !== payload.especialidade) {
+        throw new Error(`Expected 'especialidade' to be '${payload.especialidade}', but got '${res.body.especialidade}'`);
+      }
+      if (res.body.tempo !== payload.tempo) {
+        throw new Error(`Expected 'tempo' to be '${payload.tempo}', but got '${res.body.tempo}'`);
+      }
+      if (res.body.necessidadeEquipe !== payload.necessidadeEquipe) {
+        throw new Error(`Expected 'necessidadeEquipe' to be '${payload.necessidadeEquipe}', but got '${res.body.necessidadeEquipe}'`);
+      }
+      if (res.body.equipe !== payload.equipe) {
+          throw new Error(`Expected 'equipe' to be '${payload.equipe}', but got '${res.body.equipe}'`);
+      }
     })
     .expect(200, done);
 });

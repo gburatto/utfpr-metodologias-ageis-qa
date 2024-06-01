@@ -80,6 +80,10 @@ module.exports = () => {
             return;
         }
 
+        if (procedimento.necessidadeEquipe !== 'sim') {
+            procedimento.equipe = undefined;
+        }
+
         id++;
         procedimento.id = id;
 
@@ -147,6 +151,10 @@ module.exports = () => {
                 res.status(400).json({ erro: 'A equipe necessária não pode ser nula se o campo \'Necessidade de Equipe\' for igual a \'sim\'' });
                 return;
             }
+        }
+
+        if (procedimentoAtualizado.necessidadeEquipe !== 'sim') {
+            procedimentoAtualizado.equipe = undefined;
         }
 
         procedimentos[procedimentoIndex] = procedimentoAtualizado;
