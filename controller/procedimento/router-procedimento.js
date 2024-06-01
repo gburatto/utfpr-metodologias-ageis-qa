@@ -4,7 +4,7 @@ const controlerProcedimento = require('./controller-procedimento')();
 
 procedimentos.get('/', controlerProcedimento.listar);
 procedimentos.post('/', controlerProcedimento.salvar);
-procedimentos.delete('/procedimentos/:id', controlerProcedimento.delete);
-procedimentos.patch('/procedimentos/:id', controlerProcedimento.editar);
+procedimentos.delete('/:id', controlerProcedimento.delete);
+procedimentos.patch('/:id', controlerProcedimento.patch);
 
 module.exports = procedimentos;
