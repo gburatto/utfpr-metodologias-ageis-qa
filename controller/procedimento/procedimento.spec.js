@@ -257,6 +257,120 @@ it("should return an error when trying to update procedure 'nome' with too long 
     .expect(400, done);
 });
 
+// Testes de validação da "especialidade"
+
+it("should return an error when procedure 'especialidade' is empty", done => {
+  const payload = { nome: 'cirurgia', especialidade: '', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'A especialidade é obrigatória' })
+    .expect(400, done);
+});
+
+it("should return an error when procedure 'especialidade' is too long", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'aaaaaaaaaaaaaaaa', tempo: "2:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'A especialidade não pode conter palavras com mais de 15 caracteres' })
+    .expect(400, done);
+});
+
+// Testes de validação do "tempo médio"
+
+it("should return an error when procedure 'tempo médio' is empty", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O tempo médio é obrigatório' })
+    .expect(400, done);
+});
+
+it("should return an error when procedure 'tempo médio' is in the wrong format", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2h00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O tempo médio deve estar no formato HH:MM, limitado a 24 horas' })
+    .expect(400, done);
+});
+
+it("should return an error when procedure 'tempo médio' is not in 30 minute intervals", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:15", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'Somente são aceitos intervalos de 30 em 30 minutos' })
+    .expect(400, done);
+});
+
+it("should return an error when procedure 'tempo médio' is lower than 30 minutes", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "0:00", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O tempo médio não pode ser menor do que 30 minutos' })
+    .expect(400, done);
+});
+
+it("should return an error when procedure 'tempo médio' is higher than 24 hours", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "24:30", necessidadeEquipe: "sim", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O tempo médio não pode ser maior do que 24 horas' })
+    .expect(400, done);
+});
+
+// Testes de validação da "necessidade de equipe"
+
+it("should return an error when procedure 'necessidade de equipe' is empty", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "" };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O campo \'Necessidade de Equipe\' é obrigatório' })
+    .expect(400, done);
+});
+
+it("should return an error when procedure 'necessidade de equipe' is different than 'sim' or 'não'", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "talvez", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'O campo \'Necessidade de Equipe\' deve ser \'sim\' ou \'não\'' })
+    .expect(400, done);
+});
+
+// Testes de validação da "equipe"
+
+it("should return an error when procedure 'necessidade de equipe' is 'sim' but 'equipe' is empty", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "sim", equipe: '' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect({ erro: 'A equipe necessária não pode ser nula se o campo \'Necessidade de Equipe\' for igual a \'sim\'' })
+    .expect(400, done);
+});
+
+it("should set 'equipe' to 'undefined' if 'necessidade de equipe' is 'não'", done => {
+  const payload = { nome: 'cirurgia', especialidade: 'ortopedia', tempo: "2:00", necessidadeEquipe: "não", equipe: 'anestesista' };
+  request(app)
+    .patch("/1")
+    .send(payload)
+    .expect(res => {
+      if (res.body.necessidadeEquipe !== payload.necessidadeEquipe) {
+        throw new Error(`Expected 'necessidadeEquipe' to be '${payload.necessidadeEquipe}', but got '${res.body.necessidadeEquipe}'`);
+      }
+      if (res.body.equipe !== undefined) {
+        throw new Error(`Expected 'equipe' to be 'undefined', but got '${res.body.equipe}'`);
+      }
+    })
+    .expect(200, done);
+});
+
 // ---------------------------------------------------------------------
 // Testes do método DELETE
 

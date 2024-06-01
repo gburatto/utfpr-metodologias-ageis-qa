@@ -122,6 +122,11 @@ module.exports = () => {
             }
         }
 
+        if (!procedimentoAtualizado.especialidade) {
+            res.status(400).json({ erro: 'A especialidade é obrigatória' });
+            return;
+        }
+
         if (procedimentoAtualizado.tempo) {
             const horario = /^([01]?[0-9]|2[0-4]):[0-5][0-9]$/;
             if (!horario.test(procedimentoAtualizado.tempo)) {
@@ -146,6 +151,11 @@ module.exports = () => {
             }
         }
 
+        if (!procedimentoAtualizado.tempo) {
+            res.status(400).json({ erro: 'O tempo médio é obrigatório' });
+            return;
+        }
+
         if (procedimentoAtualizado.necessidadeEquipe) {
             if (procedimentoAtualizado.necessidadeEquipe !== 'sim' && procedimentoAtualizado.necessidadeEquipe !== 'não') {
                 res.status(400).json({ erro: 'O campo \'Necessidade de Equipe\' deve ser \'sim\' ou \'não\'' });
@@ -156,6 +166,16 @@ module.exports = () => {
                 res.status(400).json({ erro: 'A equipe necessária não pode ser nula se o campo \'Necessidade de Equipe\' for igual a \'sim\'' });
                 return;
             }
+        }
+
+        if (!procedimentoAtualizado.necessidadeEquipe) {
+            res.status(400).json({ erro: 'O campo \'Necessidade de Equipe\' é obrigatório' });
+            return;
+        }
+
+        if (procedimentoAtualizado.necessidadeEquipe === 'sim' && (!procedimentoAtualizado.equipe)) {
+            res.status(400).json({ erro: 'A equipe necessária não pode ser nula se o campo \'Necessidade de Equipe\' for igual a \'sim\'' });
+            return;
         }
 
         if (procedimentoAtualizado.necessidadeEquipe !== 'sim') {
